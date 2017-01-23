@@ -3,8 +3,11 @@
 ##!
 ##! This file will not be overwritten when upgrading or reinstalling!
 
-# Process packets despite bad checksums.
+# Custom: Process packets despite bad checksums.
 redef ignore_checksums = T;
+
+# Custom: Write JSON logs
+@load tuning/json-logs.bro
 
 # This script logs which scripts were loaded during each run.
 @load misc/loaded-scripts
@@ -12,17 +15,19 @@ redef ignore_checksums = T;
 # Apply the default tuning scripts for common tuning settings.
 @load tuning/defaults
 
+# Estimate and log capture loss.
+@load misc/capture-loss
+
+# Enable logging of memory, packet and lag statistics.
+@load misc/stats
+
 # Load the scan detection script.
 @load misc/scan
 
-{% if not bro_force_source_build and bro_v != '2.5' %}
-# Log some information about web applications being used by users 
-# on your network.
-@load misc/app-stats
-
-{% endif %}
-# Detect traceroute being run on the network.  
-@load misc/detect-traceroute
+# Detect traceroute being run on the network. This could possibly cause
+# performance trouble when there are a lot of traceroutes on your network.
+# Enable cautiously.
+#@load misc/detect-traceroute
 
 # Generate notices when vulnerable versions of software are discovered.
 # The default is to only monitor software found in the address space defined
@@ -79,7 +84,7 @@ redef ignore_checksums = T;
 # Detect SQL injection attacks.
 @load protocols/http/detect-sqli
 
-# Log HTTP server header names
+# Custom: Log HTTP server header names
 @load protocols/http/header-names
 redef HTTP::log_server_header_names = T;
 
@@ -95,8 +100,8 @@ redef HTTP::log_server_header_names = T;
 #redef IRC::extraction_prefix = "{{ bro_extractedfiles }}/irc/irc-file";
 
 ## Enable password logging
-redef FTP::default_capture_password = T;
-redef HTTP::default_capture_password = T;
+#redef FTP::default_capture_password = T;
+#redef HTTP::default_capture_password = T;
 
 #### Network File Handling ####
 
@@ -108,14 +113,14 @@ redef HTTP::default_capture_password = T;
 
 # Uncomment the following line to enable detection of the heartbleed attack. Enabling
 # this might impact performance a bit.
-@load policy/protocols/ssl/heartbleed
-@load protocols/ssl/extract-certs-pem
-redef SSL::extract_certs_pem = ALL_HOSTS;
-@load policy/protocols/ssl/expiring-certs.bro
-redef SSL::notify_certs_expiration = ALL_HOSTS;
-@load policy/frameworks/files/detect-MHR.bro
-@load {{ broids_site }}/bro-pdns
-redef PDNS::uri = "mysql://{{ mysql_pdns_user }}:{{ mysql_pdns_pass }}@localhost/pdns";
+#@load policy/protocols/ssl/heartbleed
+#@load protocols/ssl/extract-certs-pem
+#redef SSL::extract_certs_pem = ALL_HOSTS;
+#@load policy/protocols/ssl/expiring-certs.bro
+#redef SSL::notify_certs_expiration = ALL_HOSTS;
+#@load policy/frameworks/files/detect-MHR.bro
+#@load {{ broids_site }}/bro-pdns
+#redef PDNS::uri = "mysql://{{ mysql_pdns_user }}:{{ mysql_pdns_pass }}@localhost/pdns";
 
 #### Intel ####
 
@@ -137,30 +142,31 @@ redef Intel::read_files += {
 @load /opt/critical-stack/frameworks/intel
 
 {% endif %}
-@load apt1
+
+#@load apt1
 
 {% if not bro_force_source_build and bro_v != '2.5' %}
 @load {{ broids_site }}/cs-bro/bro-scripts/dce-rpc
 {% endif %}
-@load {{ broids_site }}/cs-bro/bro-scripts/extensions
-@load {{ broids_site }}/cs-bro/bro-scripts/msb
-@load {{ broids_site }}/cs-bro/bro-scripts/rfd/detect-rfd.bro
-@load {{ broids_site }}/cs-bro/bro-scripts/shellshock/detect-shellshock.bro
+#@load {{ broids_site }}/cs-bro/bro-scripts/extensions
+#@load {{ broids_site }}/cs-bro/bro-scripts/msb
+#@load {{ broids_site }}/cs-bro/bro-scripts/rfd/detect-rfd.bro
+#@load {{ broids_site }}/cs-bro/bro-scripts/shellshock/detect-shellshock.bro
 #@load {{ broids_site }}/cs-bro/bro-scripts/sinkholes
-@load {{ broids_site }}/cs-bro/bro-scripts/ssdp
-@load {{ broids_site }}/cs-bro/bro-scripts/tor
-@load {{ broids_site }}/cs-bro/bro-scripts/tracked-providers
-@load {{ broids_site }}/jonschipp-bro/ipmi.bro
-@load {{ broids_site }}/securitykitten-bro/bro_beacons.bro
-@load {{ broids_site }}/securitykitten-bro/bro_typosquatting.bro
-@load {{ broids_site }}/securitykitten-bro/bro_typosquatting_email.bro
+#@load {{ broids_site }}/cs-bro/bro-scripts/ssdp
+#@load {{ broids_site }}/cs-bro/bro-scripts/tor
+#@load {{ broids_site }}/cs-bro/bro-scripts/tracked-providers
+#@load {{ broids_site }}/jonschipp-bro/ipmi.bro
+#@load {{ broids_site }}/securitykitten-bro/bro_beacons.bro
+#@load {{ broids_site }}/securitykitten-bro/bro_typosquatting.bro
+#@load {{ broids_site }}/securitykitten-bro/bro_typosquatting_email.bro
 ## fast-flux, non-standard port dns
 ## errors?
 #@load {{ broids_site }}/sooshie-bro/2.4-scripts/ffluxDNS.bro
-@load {{ broids_site }}/sooshie-bro/2.4-scripts/dns-bad_behavior.bro
-@load {{ broids_site }}/sooshie-bro/2.4-scripts/largeUpload.bro
-@load {{ broids_site }}/sooshie-bro/exploitkit/exploitkit.bro
-@load {{ broids_site }}/sooshie-bro/misc/multi-user-agent.bro
+#@load {{ broids_site }}/sooshie-bro/2.4-scripts/dns-bad_behavior.bro
+#@load {{ broids_site }}/sooshie-bro/2.4-scripts/largeUpload.bro
+#@load {{ broids_site }}/sooshie-bro/exploitkit/exploitkit.bro
+#@load {{ broids_site }}/sooshie-bro/misc/multi-user-agent.bro
 
 
 
