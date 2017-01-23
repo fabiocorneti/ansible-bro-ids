@@ -6,7 +6,7 @@ broids_packages:
     - broctl
 
 broids_packages_deps:
-    - mysql-server
+    #- mysql-server
     - php-mysql
     - python-pip
     - python-sqlalchemy
