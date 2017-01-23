@@ -110,11 +110,13 @@
   command: ethtool --show-offload eth0
   register: ethtool
   changed_when: false
+  when: bro_disable_offloading
 ## FIXME! not working on digitalocean droplet: got: 'rx-checksumming: on [fixed] tx-checksumming: off' and can't change
 - name: Disable network card offloading for eth0
   command: ethtool --offload eth0 rx off tx off
   when: ethtool.stdout is defined and ethtool.stdout.find("-checksumming{{ ':' }} on") != -1
   ignore_errors: true
+  when: bro_disable_offloading
 
 #- name: start BRO_PDNS API service
 #  command: "BRO_PDNS_DB=mysql://{{ mysql_pdns_user }}::{{ mysql_pdns_pass }}@localhost/pdns {{ broids_site }}/bro-pdns/bro_pdns.py serve"

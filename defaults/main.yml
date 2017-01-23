@@ -13,6 +13,9 @@ bro_nodes_if: eth0
 
 bro_email_notification: true
 
+# Disable NIC offloading
+bro_disable_offloading: false
+
 ## Only available for Ubuntu 12.04 (EOL Apr 2017) + trusty, has pfring
 ## TODO test trusty
 use_securityonion_deb: false
