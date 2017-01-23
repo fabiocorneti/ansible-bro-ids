@@ -127,4 +127,5 @@
 
 - include: aide-hids.yml
 - include: monit.yml
+  when: bro_enable_monit
 
