@@ -126,6 +126,7 @@
 # curl http://localhost:8081/dns/www.youtube.com
 
 - include: aide-hids.yml
+  when: bro_enable_aide
 - include: monit.yml
   when: bro_enable_monit
 

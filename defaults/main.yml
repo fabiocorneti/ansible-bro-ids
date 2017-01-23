@@ -22,6 +22,9 @@ bro_enable_pdns: false
 # Enable Monit
 bro_enable_monit: false
 
+# Enable AIDE HIDS
+bro_enable_aide: false
+
 ## Only available for Ubuntu 12.04 (EOL Apr 2017) + trusty, has pfring
 ## TODO test trusty
 use_securityonion_deb: false
