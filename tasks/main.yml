@@ -84,6 +84,7 @@
     - restart bro
 
 - include: pdns.yml
+  when: bro_enable_pdns
 
 - name: create directory for extracted files
   file: dest="{{ item }}" state=directory mode=0755
